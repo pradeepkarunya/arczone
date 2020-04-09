@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles/';
 import Header from './Header';
 import Theme from './Theme';
@@ -18,7 +19,22 @@ function App() {
   return (
     <>
         <ThemeProvider theme={Theme}>
+        <BrowserRouter>
         <Header />
+        <Switch>
+          <Route exact path="/" component={()=> <div>Drivers</div>} />
+          <Route exact path="/profitcenter" component={()=> <div>Profit Centers</div>} />
+          <Route exact path="/chennai" component={()=> <div>Chennai</div>} />
+          <Route exact path="/mumbai" component={()=> <div>Mumbai</div>} />
+          <Route exact path="/sj" component={()=> <div>SJ</div>} />
+          <Route exact path="/tractors" component={()=> <div>Tractors</div>} />
+          <Route exact path="/reports" component={()=> <div>Reports</div>} />
+          <Route exact path="/documentcenter" component={()=> <div>Document Centers</div>} />
+          <Route exact path="/messages" component={()=> <div>Messages</div>} />
+        </Switch>
+        
+        </BrowserRouter>
+        
         </ThemeProvider>
         </>
   );
