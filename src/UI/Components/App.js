@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles/';
 import Header from './Header';
 import Theme from './Theme';
+import HOC from '../../HOC/Hoc';
 
 /*const paragraphGenerator = ()=>{
   return [...new Array(120)]
@@ -22,15 +23,15 @@ function App() {
         <BrowserRouter>
         <Header />
         <Switch>
-          <Route exact path="/" component={()=> <div>Drivers</div>} />
-          <Route exact path="/profitcenter" component={()=> <div>Profit Centers</div>} />
-          <Route exact path="/chennai" component={()=> <div>Chennai</div>} />
-          <Route exact path="/mumbai" component={()=> <div>Mumbai</div>} />
-          <Route exact path="/sj" component={()=> <div>SJ</div>} />
-          <Route exact path="/tractors" component={()=> <div>Tractors</div>} />
-          <Route exact path="/reports" component={()=> <div>Reports</div>} />
-          <Route exact path="/documentcenter" component={()=> <div>Document Centers</div>} />
-          <Route exact path="/messages" component={()=> <div>Messages</div>} />
+          <Route exact path="/" component={()=> (<HOC><div>Drivers</div></HOC>)} />
+          <Route exact path="/profitcenter" component={()=> (<HOC><div>Profit Centers</div></HOC>)} />
+          <Route exact path="/chennai" component={()=> (<HOC><div>Chennai</div></HOC>)} />
+          <Route exact path="/mumbai" component={()=> (<HOC><div>Mumbai</div></HOC>)} />
+          <Route exact path="/sj" component={()=> (<HOC><div>SJ</div></HOC>)} />
+          <Route exact path="/tractors" component={()=> (<HOC><div>Tractors</div></HOC>)} />
+          <Route exact path="/reports" component={()=> (<HOC><div>Reports</div></HOC>)} />
+          <Route exact path="/documentcenter" component={()=> (<HOC><div>Document Centers</div></HOC>)} />
+          <Route exact path="/messages" component={()=> (<HOC><div>Messages</div></HOC>)} />
         </Switch>
         
         </BrowserRouter>

@@ -1,0 +1,7 @@
+.hocClass{
+    display: flex;
+    clear: both;
+    margin: 0 auto;
+    align-items: flex-start;
+    justify-content: center;
+}

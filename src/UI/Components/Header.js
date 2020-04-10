@@ -12,6 +12,17 @@ import { AccountCircle, Notifications } from "@material-ui/icons";
 import logo from "../../assets/ArcZoneLogo.svg";
 import { Link } from "react-router-dom";
 
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
+
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+
 function ElevationScroll(props) {
   const { children } = props;
   // Note that you normally won't need to set the window ref as useScrollTrigger
@@ -26,6 +37,8 @@ function ElevationScroll(props) {
     elevation: trigger ? 4 : 0,
   });
 }
+
+const profitCenterRef = React.createRef();
 
 const useStyles = makeStyles((theme) => ({
   toolbarMargin: {
@@ -50,19 +63,55 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     boxShadow: "0.8px 0.8px 0.8px 0.8px #ccc",
+    border: "1px solid",
   },
   logoClass: {
     width: "5%",
+    height: "3em",
+    [theme.breakpoints.down("md")]: {
+      width: "6%",
+      height: "2em",
+    },
+    [theme.breakpoints.down("xs")]: {
+      width: "7%",
+      height: "2em",
+    },
   },
   menu: {
     background: theme.palette.common.reactMaterialBlue,
     color: theme.palette.common.reactMaterialWhite,
   },
   menuItemStyle: {
-    '&:hover':{
+    opacity: "0.7",
+    "&:hover": {
       background: theme.palette.common.reactMaterialOrange,
-    }
+      opacity: "1",
+    },
   },
+  iconDrawerBtn: {
+    marginLeft: "auto",
+    "&:hover": {
+      background: "transparent",
+    },
+  },
+  menuIconDrawer: {
+    height: "25px",
+    width: "25px",
+  },
+  swipeableStyle: {
+    fontFamily: 'Segoe UI',
+    background: theme.palette.common.reactMaterialBlue,
+    color: theme.palette.common.reactMaterialWhite,
+  },
+  swipeableListStyle: {
+    "&:hover": {
+      background: theme.palette.common.reactMaterialOrange,
+      fontWeight: 'bold'
+    },
+  },
+  appBarClass:{
+    zIndex: theme.zIndex.modal + 1
+  }
 }));
 
 /*
@@ -76,9 +125,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
   const useStyleHook = useStyles();
+  const theme = useTheme();
+  const mdQuery = useMediaQuery(theme.breakpoints.down("md"));
+
+  const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [value, setvalue] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
 
   const pathArr = [
     "/",
@@ -91,7 +146,7 @@ export default function Header() {
 
   const subMenus = {
     0: [],
-    1: ["/chennai", "/mumbai", "/sj"],
+    1: ["/profitcenter","/chennai", "/mumbai", "/sj"],
     2: [],
     3: [],
     4: [],
@@ -118,125 +173,185 @@ export default function Header() {
 
   const handleClick = (e) => {
     setAnchorEl(e.currentTarget);
-    setOpen(true);
+    setOpenMenu(true);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
-    setOpen(false);
+    setOpenMenu(false);
   };
+
+  const routes = [
+    { label: "Drivers", to: "/", activeIndex: 0 },
+    {
+      label: "Profit Centers",
+      to: "/profitcenter",
+      activeIndex: 1,
+      ariaOwns: anchorEl ? profitCenterRef : undefined,
+      ariaHaspopup: anchorEl ? true : undefined,
+      onClick: (e) => handleClick(e),
+      onHover: (e) => handleClick(e),
+    },
+    { label: "Tractors", to: "/tractors", activeIndex: 2 },
+    { label: "Reports", to: "/reports", activeIndex: 3 },
+    { label: "Document Center", to: "/documentcenter", activeIndex: 4 },
+    { label: "Messages", to: "/messages", activeIndex: 5 },
+  ];
+
+  const tabs = (
+    <>
+      <Tabs
+        value={value}
+        className={useStyleHook.tabContainer}
+        onChange={handleChange}
+        indicatorColor="primary"
+      >
+        {routes.map((val, idx) => (
+          <Tab
+            className={useStyleHook.tab}
+            label={val.label}
+            component={Link}
+            to={val.to}
+            aria-owns={val.ariaOwns}
+            aria-haspopup={val.ariaHaspopup}
+            onClick={val.onClick}
+            onMouseOver={val.onHover}
+          ></Tab>
+        ))}
+      </Tabs>
+      <AccountCircle />
+      <Notifications />
+      <Menu
+        id={profitCenterRef}
+        elevation={0}
+        classes={{ paper: useStyleHook.menu }}
+        anchorEl={anchorEl}
+        open={openMenu}
+        style={{zIndex: theme.zIndex.modal + 2}}
+        onClose={() => {
+          handleClose();
+          setvalue(1);
+        }}
+        MenuListProps={{ onMouseLeave: handleClose }}
+      >
+        <MenuItem
+          key={`Math.random()+0`}
+          className={useStyleHook.menuItemStyle}
+          component={Link}
+          to="/profitcenter"
+          onClose={() => {
+            handleClose();
+            setvalue(1);
+          }}
+          onClick={() => {
+            handleClose();
+            setvalue(1);
+          }}
+        >
+          Profit Centers
+        </MenuItem>
+        <MenuItem
+          key={`Math.random()+1`}
+          className={useStyleHook.menuItemStyle}
+          component={Link}
+          to="/chennai"
+          onClose={() => {
+            handleClose();
+            setvalue(1);
+          }}
+          onClick={() => {
+            handleClose();
+            setvalue(1);
+          }}
+        >
+          Chennai
+        </MenuItem>
+        <MenuItem
+          key={`Math.random()+2`}
+          className={useStyleHook.menuItemStyle}
+          component={Link}
+          to="/mumbai"
+          onClose={() => {
+            handleClose();
+            setvalue(1);
+          }}
+          onClick={() => {
+            handleClose();
+            setvalue(1);
+          }}
+        >
+          Mumbai
+        </MenuItem>
+        <MenuItem
+          key={`Math.random()+3`}
+          className={useStyleHook.menuItemStyle}
+          component={Link}
+          to="/sj"
+          onClose={() => {
+            handleClose();
+            setvalue(1);
+          }}
+          onClick={() => {
+            handleClose();
+            setvalue(1);
+          }}
+        >
+          San Jose
+        </MenuItem>
+      </Menu>
+    </>
+  );
+
+  const drawer = (
+    <>
+      <SwipeableDrawer
+        classes={{ paper: useStyleHook.swipeableStyle }}
+        disableBackdropTransition={!iOS}
+        disableDiscovery={iOS}
+        open={openDrawer}
+        close={() => setOpenDrawer(false)}
+        onOpen={() => setOpenDrawer(true)}
+        onClose={() => setOpenDrawer(false)}
+      >
+        <div className={useStyleHook.toolbarMargin} />
+        <List disablePadding>
+          {routes.map((route, idx) => (
+            <ListItem
+              divider
+              button
+              key={idx}
+              component={Link}
+              to={route.to}
+              selected={value === route.activeIndex}
+              classes={{selected: useStyleHook.swipeableListStyle}}
+              className={useStyleHook.swipeableListStyle}
+              onClick={() => {
+                setOpenDrawer(false);
+                setvalue(route.activeIndex);
+              }}
+            >
+              <ListItemText key={`listItem`+idx} disableTypography>{route.label}</ListItemText>
+            </ListItem>
+          ))}
+        </List>
+      </SwipeableDrawer>
+      <IconButton
+        className={useStyleHook.iconDrawerBtn}
+        onClick={() => setOpenDrawer(!openDrawer)}
+        disableRipple
+      >
+        <MenuIcon className={useStyleHook.menuIconDrawer} />
+      </IconButton>
+    </>
+  );
 
   return (
     <>
       <ElevationScroll>
-        <AppBar position="fixed" color="primary">
+        <AppBar position="fixed" color="primary" className={useStyleHook.appBarClass}>
           <ToolBar className={useStyleHook.toolbar}>
-            <img src={logo} alt="ARC logo" className={useStyleHook.logoClass} />
-            <Tabs
-              value={value}
-              className={useStyleHook.tabContainer}
-              onChange={handleChange}
-              indicatorColor="primary"
-            >
-              <Tab
-                className={useStyleHook.tab}
-                label="Drivers"
-                component={Link}
-                to="/"
-              />
-              <Tab
-                aria-owns={anchorEl ? "profitcentermenu" : undefined}
-                aria-haspopup={anchorEl ? true : undefined}
-                onClick={(e) => handleClick(e)}
-                className={useStyleHook.tab}
-                label="Profit Centers"
-                component={Link}
-                to="/profitcenter"
-              />
-              <Tab
-                className={useStyleHook.tab}
-                label="Tractors"
-                component={Link}
-                to="/tractors"
-              />
-              <Tab
-                className={useStyleHook.tab}
-                label="Reports"
-                component={Link}
-                to="/reports"
-              />
-              <Tab
-                className={useStyleHook.tab}
-                label="Document Center"
-                component={Link}
-                to="/documentcenter"
-              />
-              <Tab
-                className={useStyleHook.tab}
-                label="Messages"
-                component={Link}
-                to="/messages"
-              />
-            </Tabs>
-            <AccountCircle />
-            <Notifications />
-            <Menu
-              id="profitcentermenu"
-              elevation={0}
-              classes={{ paper: useStyleHook.menu }}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={() => {
-                handleClose();
-                setvalue(1);
-              }}
-              MenuListProps={{ onMouseLeave: handleClose }}
-            >
-              <MenuItem
-                className={useStyleHook.menuItemStyle}
-                component={Link}
-                to="/profitcenter"
-                onClose={() => {
-                  handleClose();
-                  setvalue(1);
-                }}
-              >
-                Profit Centers
-              </MenuItem>
-              <MenuItem
-                className={useStyleHook.menuItemStyle}
-                component={Link}
-                to="/chennai"
-                onClose={() => {
-                  handleClose();
-                  setvalue(1);
-                }}
-              >
-                Chennai
-              </MenuItem>
-              <MenuItem
-                className={useStyleHook.menuItemStyle}
-                component={Link}
-                to="/mumbai"
-                onClose={() => {
-                  handleClose();
-                  setvalue(1);
-                }}
-              >
-                Mumbai
-              </MenuItem>
-              <MenuItem
-                className={useStyleHook.menuItemStyle}
-                component={Link}
-                to="/sj"
-                onClose={() => {
-                  handleClose();
-                  setvalue(1);
-                }}
-              >
-                San Jose
-              </MenuItem>
-            </Menu>
+            <img src={logo} alt="ARK logo" className={useStyleHook.logoClass} />
+            {mdQuery ? drawer : tabs}
           </ToolBar>
         </AppBar>
       </ElevationScroll>
